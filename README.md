@@ -6,13 +6,13 @@
 	import servicemanager
 	
 	class MyService(win32serviceutil.ServiceFramework):
-		_svc_name_ = 'KennySrv'
-    	_svc_display_name_ = 'Kenny Test Service'
-    	_svc_description_ = 'Test Kenny Service'
+		_svc_name_ = 'MasonSrv'
+    	_svc_display_name_ = 'Mason Test Service'
+    	_svc_description_ = 'Test Mason Service'
 
 		def __init__(self, args):
         	win32serviceutil.ServiceFramework.__init__(self, args)
-        	self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)
+        	self.stop_event = win32event.CreateEvent(None, 0, 0, None)
 		
 		def SvcDoRun(self):
 			self.ReportServiceStatus(win32service.SERVICE_START_PENDING) 
@@ -29,7 +29,7 @@
 Using the win32serviceutil.ServiceFramewok and implement above these function.
 Note that the keyword **\_svc_name\_**, **\_svc_display_name\_** and **_svc_description\_** is the windwos service keyword. To explain below
 
-* \_svc_name\_ : It's a name for Windows Service Name, this name could be the same name of the Class Name, or could not, for example, the Class Name is MyService, the svc_name could be the same (MyService) or other name (KennySrv). The important thing is, when load the service into the windows, we must be to use the srv_name, not class name!
+* \_svc_name\_ : It's a name for Windows Service Name, this name could be the same name of the Class Name, or could not, for example, the Class Name is MyService, the svc_name could be the same (MyService) or other name (MasonSrv). The important thing is, when load the service into the windows, we must be to use the srv_name, not class name!
 * \_svc_display_name\_ : When service is loaded, Windows service manager will show this **display name**
 * \_svc_description_ : It's just a description and will be put the note.
 
@@ -38,17 +38,18 @@ Note that the keyword **\_svc_name\_**, **\_svc_display_name\_** and **_svc_desc
 When you write down the code which name is MyService.py for example, you cane use the pythonic way to test, the instruction list below.
 
 1. python MyService.py install (install the service to windows)
-2. net start KennySrv (if the \_srv_name\_ is KennySrv)
+2. net start MasonSrv (if the \_srv_name\_ is MasonSrv)
 3. All of the message will be output to Event viewer, You can open the start menu and type the **evnetvwr** to open this application. (Windows Logs --> Application)
-4. net stop KennySrv (stop the service from windows)
+4. net stop MasonSrv (stop the service from windows)
 5. python MyService.py remove  (remove the servie from windows service register list)
 
 ### Executable way
-If your python script has been converted to executable file(using pyinstaller or py2exe), then you can just do the same thing but no python keyword
+If your python script has been converted to executable file(using pyinstaller or py2exe), then you can just do the same thing but no python keyword.
+ex: pyinstaller MyService.py --onefile --hidden-import win32timezone
 
-1. MyService.exe install
-2. net start KennySrv
-3. net stop KennySrv
+1. MyService.exe install (MyService.exe --username USERNAME --password PASSWORD --startup auto install)
+2. net start MasonSrv
+3. net stop MasonSrv
 4. MyService.exe remove
 
 ### Debug mode
@@ -71,14 +72,14 @@ Using the sc command to create service, the instruction is below
 
 for example: 
 
-`sc create KennySrv binpath= "C:\abc\def\MyService.exe"`
+`sc create MasonSrv binpath= "C:\abc\def\MyService.exe"`
 
 #### To start the service
 `sc start [_srv_name_]`
 
 for example
 
-`sc start KennySrv`
+`sc start MasonSrv`
 
 #### To stop the service
 
@@ -86,7 +87,7 @@ for example
 
 for example
 
-`sc stop KennySrv`
+`sc stop MasonSrv`
 
 #### To delete the service
 
@@ -94,7 +95,7 @@ for example
 
 for example
 
-`sc delete KennySrv`
+`sc delete MasonSrv`
 
 
 ### Mix the net and sc

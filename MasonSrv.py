@@ -1,27 +1,19 @@
-# -*- coding: utf-8 -*-
-
-import win32service
-import win32api
-import win32serviceutil
-import win32event
-import servicemanager
-#import winerror
-#import subprocess
-#import shlex
 import sys
-import os
-import psutil
+import win32api
+import win32event
+import win32service
+import servicemanager
+import win32serviceutil
 
 
-class KennySrv(win32serviceutil.ServiceFramework):
-
-    _svc_name_ = 'KennySrv'
-    _svc_display_name_ = 'Kenny.ME Service'
-    _svc_description_ = 'Enables you to access your pc anytime, anywhere.'
+class MasonSrv(win32serviceutil.ServiceFramework):
+    _svc_name_ = 'MasonSrv'
+    _svc_display_name_ = 'Mason.ME Service'
+    _svc_description_ = 'Enables you to say hello world...'
 
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self, args)
-        self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)
+        self.stop_event = win32event.CreateEvent(None, 0, 0, None)
 
     def log(self, msg):
         servicemanager.LogInfoMsg(str(msg))
@@ -47,7 +39,7 @@ class KennySrv(win32serviceutil.ServiceFramework):
             self.log('wait')
             win32event.WaitForSingleObject(self.stop_event, win32event.INFINITE)
             self.log('done')
-        except Exception, x:
+        except Exception as x:
             self.log('Exception : %s' % x)
             self.SvcStop()
 
@@ -56,7 +48,8 @@ class KennySrv(win32serviceutil.ServiceFramework):
         self.runflag = True
         while self.runflag:
             self.sleep(5)
-            self.log("I'm alive ...")
+            self.log("Hello World! I'm alive ...")
+
     # to be overridden
 
     def my_stop(self):
@@ -64,38 +57,10 @@ class KennySrv(win32serviceutil.ServiceFramework):
         self.log("I'm done")
 
 
-def module_path():
-    encoding = sys.getfilesystemencoding()
-    if hasattr(sys, 'frozen'):
-        return os.path.dirname(unicode(sys.executable, encoding))
-    return os.path.dirname(unicode(__file__, encoding))
-
-
-def terminate_proc_tree(pid, including_parent=True):
-    parent = psutil.Process(pid)
-    for child in parent.children(recursive=True):
-        child.terminate()
-    if including_parent:
-        parent.terminate()
-
-
-def ctrlHandler(ctrlType):
-    return True
-
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         servicemanager.Initialize()
-        servicemanager.PrepareToHostSingle(KennySrv)
+        servicemanager.PrepareToHostSingle(MasonSrv)
         servicemanager.StartServiceCtrlDispatcher()
     else:
-        win32serviceutil.HandleCommandLine(KennySrv)
-
-    """
-    if len(sys.argv) == 1:
-        servicemanager.Initialize()
-        servicemanager.PrepareToHostSingle(AragogService)
-        servicemanager.StartServiceCtrlDispatcher()
-    else:
-        win32api.SetConsoleCtrlHandler(ctrlHandler, True)
-        win32serviceutil.HandleCommandLine(AragogService)
-    """
+        win32serviceutil.HandleCommandLine(MasonSrv)
